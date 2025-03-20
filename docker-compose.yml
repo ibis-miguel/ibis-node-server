@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: user123
+      POSTGRES_DB: quickquid
+  app:
+    image: my-node-app
+    ports: 
+      - 8080:3000
