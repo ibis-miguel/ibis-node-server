@@ -1,11 +1,35 @@
 services:
   db:
-    image: postgres
+    image: postgres:alpine
     environment:
       POSTGRES_PASSWORD: password123
       POSTGRES_USER: user123
       POSTGRES_DB: quickquid
+    networks:
+      - mynetwork
+
   app:
-    image: my-node-app
-    ports: 
-      - 8080:3000
+    build: .
+    ports:
+      - "8080:3000"
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ../ibis-poc-frontend
+      dockerfile: Dockerfile
+    container_name: angular-frontend-node
+    ports:
+      - "4200:80"
+    depends_on:
+      - app
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
