@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "prod": "cross-env NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +19,8 @@
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.6"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
