@@ -7,17 +7,18 @@ const BankBranch = require('./models/bankBranch');
 const Account = require('./models/account');
 const Transaction = require('./models/transaction');
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT;
 
 app.use(express.json());
 
 const corsOptions = {
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://localhost:4200',
-      'http://64.225.62.232:4200'
+      process.env.ORIGIN_1,
+      process.env.ORIGIN_2
     ];
 
     if (allowedOrigins.includes(origin) || !origin) {
@@ -108,26 +109,26 @@ app.post('/transaction', async (req, res) => {
       return res.status(400).json({ message: 'Receiver account not found' });
     }
 
-      let status;
+    let status;
     if (sender.balance < amount) {
       status = 'FAILED';
-    } else{
+    } else {
       status = 'COMPLETED';
-      sender.balance-= amount;
-      receiver.balance+= amount;
+      sender.balance -= amount;
+      receiver.balance += amount;
 
       await sender.save();
       await receiver.save();
-      }
+    }
 
-      const transaction = await Transaction.create({
-        amount,
-        description,
-        status,
-        sender_account_id: sender.id,
-        receiver_account_id: receiver.id,
-        originating_branch_id: originatingBranch.id,
-      });
+    const transaction = await Transaction.create({
+      amount,
+      description,
+      status,
+      sender_account_id: sender.id,
+      receiver_account_id: receiver.id,
+      originating_branch_id: originatingBranch.id,
+    });
 
     res.status(201).json(transaction);
   } catch (err) {
