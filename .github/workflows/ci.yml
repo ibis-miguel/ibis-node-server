@@ -27,7 +27,11 @@ jobs:
       #       ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: |
+        npm install
+
+      - name: Set executable permissions for cross-env
+        run: chmod +x node_modules/.bin/cross-env
 
       - name: Set environment variables
         run: |
