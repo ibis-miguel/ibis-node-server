@@ -1,0 +1,62 @@
+name: CI Pipeline - Node.js API
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      # - name: Cache npm dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Set executable permissions for cross-env
+        run: chmod +x node_modules/.bin/cross-env
+
+      - name: Set environment variables
+        run: |
+          echo "Using environment variables and secrets..."
+        env:
+        # Non-sensitive variables from the environment (set in GitHub Environments)
+          PORT: ${{ vars.PORT }} 
+          PORT_1: ${{ vars.PORT_1 }}
+          PORT_2: ${{ vars.PORT_2 }}
+          ORIGIN_1: ${{ vars.ORIGIN_1 }}
+          ORIGIN_2: ${{ vars.ORIGIN_2 }}
+        
+        # Sensitive secrets (stored as GitHub Secrets)
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+      - name: Run production build
+        run: npm run prod
+        env:
+          PORT: ${{ vars.PORT }} 
+          PORT_1: ${{ vars.PORT_1 }}
+          PORT_2: ${{ vars.PORT_2 }}
+          ORIGIN_1: ${{ vars.ORIGIN_1 }}
+          ORIGIN_2: ${{ vars.ORIGIN_2 }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
