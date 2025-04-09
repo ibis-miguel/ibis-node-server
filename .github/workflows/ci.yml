@@ -29,5 +29,30 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
+      - name: Set environment variables
+        run: |
+          echo "Using environment variables and secrets..."
+        env:
+        # Non-sensitive variables from the environment (set in GitHub Environments)
+          PORT: ${{ vars.PORT }} 
+          PORT_1: ${{ vars.PORT_1 }}
+          PORT_2: ${{ vars.PORT_2 }}
+          ORIGIN_1: ${{ vars.ORIGIN_1 }}
+          ORIGIN_2: ${{ vars.ORIGIN_2 }}
+        
+        # Sensitive secrets (stored as GitHub Secrets)
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+      - name: Run production build
         run: npm run prod
+        env:
+          PORT: ${{ vars.PORT }} 
+          PORT_1: ${{ vars.PORT_1 }}
+          PORT_2: ${{ vars.PORT_2 }}
+          ORIGIN_1: ${{ vars.ORIGIN_1 }}
+          ORIGIN_2: ${{ vars.ORIGIN_2 }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
